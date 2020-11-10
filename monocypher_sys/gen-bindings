@@ -1,0 +1,14 @@
+#! /bin/bash
+set -euf -o pipefail
+cd "$(dirname "$0")"
+
+# consider:
+#  - --use-array-pointers-in-arguments
+
+bindgen \
+	--whitelist-function 'crypto_.*' \
+	--whitelist-type 'crypto_.*' \
+	--whitelist-var 'crypto_.*' \
+	--blacklist-type '__uint.*' \
+	--size_t-is-usize \
+	wrapper.h
