@@ -17,4 +17,3 @@ pub mod utils;
 
 pub mod poly1305;
 pub mod key_exchange;
-pub mod chacha20;
