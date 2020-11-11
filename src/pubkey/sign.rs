@@ -42,7 +42,7 @@ impl Context {
     pub fn new(secret_key: [u8; 32], public_key: [u8; 32]) -> Context {
         unsafe {
             let mut ctx = mem::MaybeUninit::<ffi::crypto_sign_ctx>::uninit();
-            ffi::crypto_sign_init_first_pass(ctx.as_mut_ptr() as *mut ffi::crypto_sign_ctx,
+            ffi::crypto_sign_init_first_pass(ctx.as_mut_ptr() as *mut _ as *mut _,
                                              secret_key.as_ptr(), public_key.as_ptr());
             Context(ctx.assume_init())
         }
@@ -51,7 +51,7 @@ impl Context {
     #[inline]
     pub fn update(&mut self, message: &[u8]) {
         unsafe {
-            ffi::crypto_sign_update(&mut self.0, message.as_ptr(), message.len());
+            ffi::crypto_sign_update(&mut self.0 as *mut _ as *mut _, message.as_ptr(), message.len());
         }
     }
 
@@ -59,7 +59,7 @@ impl Context {
     pub fn finalize(&mut self) -> [u8; 64] {
         unsafe {
             let mut signature = mem::MaybeUninit::<[u8; 64]>::uninit();
-            ffi::crypto_sign_final(&mut self.0, signature.as_mut_ptr() as *mut u8);
+            ffi::crypto_sign_final(&mut self.0 as *mut _ as *mut _, signature.as_mut_ptr() as *mut u8);
             signature.assume_init()
         }
     }
@@ -67,7 +67,7 @@ impl Context {
     #[inline]
     pub fn begin_second_pass(&mut self) {
         unsafe {
-            ffi::crypto_sign_init_second_pass(&mut self.0);
+            ffi::crypto_sign_init_second_pass(&mut self.0 as *mut _ as *mut _);
         }
     }
 }
